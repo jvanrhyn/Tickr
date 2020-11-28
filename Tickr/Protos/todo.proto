@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option csharp_namespace = "Tickr";
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+package todo;
+
+// The greeting service definition.
+service Todo {
+    // Sends a greeting
+    rpc Add (TodoRequest) returns (TodoReply);
+    rpc GetAll(TodoFilterRequest) returns (stream TodoReply);
+    rpc Complete(CompleteRequest) returns (CompleteReply);
+}
+
+// The request message containing the user's name.
+message TodoRequest {
+    string description = 1;
+    bool complete = 2;
+}
+
+message TodoFilterRequest {
+    bool includeCompleted = 1;
+}
+
+message CompleteRequest {
+    string id = 1;
+}
+
+// The response message containing the greetings.
+message TodoReply {
+    string id = 1;
+    string description = 2;
+    google.protobuf.Timestamp created = 3;
+    bool complete = 4;
+}
+
+message CompleteReply {
+    string id = 1;
+    string status = 2;
+        
+}

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+      <UserSecretsId>7ba0a4f5-164b-4bd2-8acf-01aede846ccc</UserSecretsId>
+  </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.32.0" />
+        <PackageReference Include="RavenDB.Client" Version="5.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\todo.proto" GrpcServices="Server" />
+    </ItemGroup>
+
+</Project>
