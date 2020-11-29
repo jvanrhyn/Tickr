@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tickr.Models;
 
 namespace Tickr
 {
     public interface IDataService
     {
-        TodoModel Add(TodoModel todoModel);
-        List<TodoModel> GetAll(bool includeCompleted);
+        Task<TodoModel> Add(TodoModel todoModel);
+        Task<List<TodoModel>> GetAll(bool includeCompleted);
 
-        bool Complete(string id);
+        Task<bool> Complete(string id);
     }
 }

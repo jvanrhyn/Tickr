@@ -19,7 +19,7 @@ namespace Tickr
             _dataService = dataService;
         }
 
-        public override Task<TodoReply> Add(TodoRequest request, ServerCallContext context)
+        public override async Task<TodoReply> Add(TodoRequest request, ServerCallContext context)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
@@ -31,7 +31,7 @@ namespace Tickr
                 Description = request.Description
             };
 
-            _dataService.Add(todoModel);
+            await _dataService.Add(todoModel);
 
             TodoReply response = new()
             {
@@ -44,30 +44,30 @@ namespace Tickr
             _logger.LogInformation("Completed creation for {id} in {duration}ms", todoModel.Id,
                 stopwatch.ElapsedMilliseconds);
             stopwatch.Stop();
-            return Task.FromResult(response);
+            return response;
         }
 
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
             ServerCallContext context)
         {
-            foreach (var todoModel in _dataService.GetAll(request.IncludeCompleted))
+            foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted))
                 await responseStream.WriteAsync(todoModel.ToResponse());
         }
 
-        public override Task<CompleteReply> Complete(CompleteRequest request, ServerCallContext context)
+        public override async Task<CompleteReply> Complete(CompleteRequest request, ServerCallContext context)
         {
             CompleteReply completeReply = new() {Id = request.Id};
 
             try
             {
-                var success = _dataService.Complete(request.Id);
+                var success = await _dataService.Complete(request.Id);
                 completeReply.Status = success ? "Completed" : "Not completed";
-                return Task.FromResult(completeReply);
+                return completeReply;
             }
             catch (TodoNotFoundException nfe)
             {
                 completeReply.Status = nfe.ToString();
-                return Task.FromResult(completeReply);
+                return completeReply;
             }
         }
     }
