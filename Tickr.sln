@@ -9,6 +9,12 @@ ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{CC86B015-6ABA-43C0-9D26-3BFAD27F46EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{336E612A-A61D-438C-A242-D2E78CFD4FDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tickr.Client", "Tickr.Client\Tickr.Client.csproj", "{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +25,13 @@ Global
 		{CA506EFC-328C-4DEB-9922-94030B0A0C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA506EFC-328C-4DEB-9922-94030B0A0C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA506EFC-328C-4DEB-9922-94030B0A0C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CA506EFC-328C-4DEB-9922-94030B0A0C3E} = {CC86B015-6ABA-43C0-9D26-3BFAD27F46EA}
+		{8FC769E2-E90D-4902-AA3F-8815A8DEF9DA} = {336E612A-A61D-438C-A242-D2E78CFD4FDD}
 	EndGlobalSection
 EndGlobal
