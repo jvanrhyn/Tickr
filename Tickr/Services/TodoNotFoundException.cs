@@ -1,6 +1,6 @@
 using System;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public class TodoNotFoundException : Exception
     {

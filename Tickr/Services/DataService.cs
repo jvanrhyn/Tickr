@@ -6,7 +6,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Tickr.Models;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public class DataService : IDataService
     {

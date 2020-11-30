@@ -1,6 +1,6 @@
 using Tickr.Models;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public static class TodoExtensions
     {

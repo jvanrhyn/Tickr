@@ -1,8 +1,7 @@
-using System;
 using System.Security.Cryptography.X509Certificates;
 using Raven.Client.Documents;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public  class DataSource
     {

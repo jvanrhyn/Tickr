@@ -1,12 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Tickr.Models;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public class TodoService : Todo.TodoBase
     {

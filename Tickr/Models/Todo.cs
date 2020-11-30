@@ -5,9 +5,10 @@ namespace Tickr.Models
 {
     public class TodoModel
     {
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; set; }
-        public string Description { get; set; }
-        public DateTime Created { get; set; }
+        public string Description { get; init; }
+        public DateTime Created { get; init; }
         public bool Complete { get; set; }
 
         public TodoReply ToResponse()

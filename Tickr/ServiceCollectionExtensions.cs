@@ -16,7 +16,7 @@ namespace Tickr
             return services.AddConfig<TSettings>(configuration, options => { });
         }
 
-        public static TSettings AddConfig<TSettings>(this IServiceCollection services, IConfiguration configuration, Action<BinderOptions> configureOptions)
+        private static TSettings AddConfig<TSettings>(this IServiceCollection services, IConfiguration configuration, Action<BinderOptions> configureOptions)
             where TSettings : class, new()
         {
             if (services == null) { throw new ArgumentNullException(nameof(services)); }

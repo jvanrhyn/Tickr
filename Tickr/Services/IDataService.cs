@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tickr.Models;
 
-namespace Tickr
+namespace Tickr.Services
 {
     public interface IDataService
     {
