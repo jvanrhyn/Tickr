@@ -22,7 +22,7 @@ namespace Tickr
             if (services == null) { throw new ArgumentNullException(nameof(services)); }
             if (configuration == null) { throw new ArgumentNullException(nameof(configuration)); }
 
-            TSettings setting = configuration.Get<TSettings>(configureOptions);
+            var setting = configuration.Get<TSettings>(configureOptions);
             services.TryAddSingleton(setting);
             return setting;
         }

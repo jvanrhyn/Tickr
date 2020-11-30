@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,27 @@ namespace Tickr
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+                options.Audience = Configuration["Auth0:Audience"];
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("protectedScope", policy =>
+                {
+                    policy.RequireClaim("scope", "grpc_protected_scope");
+                });
+            });
+            
+            
+            
+            services.AddGrpc(options => options.EnableDetailedErrors = true);
             services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
 
             services.AddSingleton<DataSource>();
@@ -34,6 +55,9 @@ namespace Tickr
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
+            
+            app.UseAuthentication(); 
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
