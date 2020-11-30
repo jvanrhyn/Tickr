@@ -40,5 +40,4 @@ message TodoReply {
 message CompleteReply {
     string id = 1;
     string status = 2;
-        
 }
