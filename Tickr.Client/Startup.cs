@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Tickr.Client.Helpers;
+using Tickr.Client.Services;
 
 namespace Tickr.Client
 {
@@ -23,6 +25,8 @@ namespace Tickr.Client
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<TodoService>();
+            services.AddSingleton<IAuthorizationHelper, AuthorizationHelper>();
             services.AddControllersWithViews();
         }
 

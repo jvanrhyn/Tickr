@@ -16,26 +16,21 @@ namespace Tickr
 
         // Additional configuration is required to successfully run gRPC on macOS.
         // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-        private static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(builder => builder.AddUserSecrets<Program>())
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
-                        .ConfigureKestrel(options =>
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        webBuilder.ConfigureKestrel(options =>
                         {
-                            options.Limits.MinRequestBodyDataRate = null;
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                            {
-                                options.ListenAnyIP(5000,
-                                    listenOptions => { listenOptions.Protocols = HttpProtocols.Http1; });
-
-                                options.ListenAnyIP(5001,
-                                    listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; });
-                            }
+                            // Setup a HTTP/2 endpoint without TLS.
+                            options.ListenLocalhost(5000, o => o.Protocols =
+                                HttpProtocols.Http2);
                         });
+                    }
+
+                    webBuilder.UseStartup<Startup>();
                 });
-        }
     }
 }

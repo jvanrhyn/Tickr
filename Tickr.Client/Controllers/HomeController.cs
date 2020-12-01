@@ -13,23 +13,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Tickr.Client.Models;
+using Tickr.Client.Services;
 
 namespace Tickr.Client.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly TodoService _todoService;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, TodoService todoService)
         {
             _logger = logger;
-            _configuration = configuration;
+            _todoService = todoService;
         }
 
         public async  Task<IActionResult> Index()
         {
-            var data = await GetAllTodo();
+            _logger.LogDebug("Fetching todo items from the server");
+            var data = await _todoService.GetAllTodo();
             return View(data);
         }
 
@@ -44,51 +46,6 @@ namespace Tickr.Client.Controllers
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
-        private async Task<List<TodoReply>> GetAllTodo()
-        {
-            var serverAddress = "https://localhost:5001";
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                AppContext.SetSwitch(
-                    "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                serverAddress = "http://localhost:5000";
-            }
-            
-            var channel = GrpcChannel.ForAddress(serverAddress);
-            var client = new Todo.TodoClient(channel);
-
-            var accessToken = await GetAccessToken();
-            var headers = new Metadata {{"Authorization", $"Bearer {accessToken}"}};
-
-
-            var response = 
-                client.GetAll(new TodoFilterRequest() {IncludeCompleted = true}, headers);
-
-            var replies = new List<TodoReply>();
-
-            while (await response.ResponseStream.MoveNext())
-            {
-                replies.Add(response.ResponseStream.Current);
-            }
-
-            return replies;
-        }
-        
-        
-         async Task<string> GetAccessToken()
-        {
-            var appAuth0Settings = _configuration.GetSection("Auth0");
-            var auth0Client = new AuthenticationApiClient(appAuth0Settings["Domain"]);
-            var tokenRequest = new ClientCredentialsTokenRequest()
-            {
-                ClientId = appAuth0Settings["ClientId"],
-                ClientSecret = appAuth0Settings["ClientSecret"],
-                Audience = appAuth0Settings["Audience"]
-            };
-            var tokenResponse = await auth0Client.GetTokenAsync(tokenRequest);
-
-            return tokenResponse.AccessToken;
-        }
+     
     }
 }
