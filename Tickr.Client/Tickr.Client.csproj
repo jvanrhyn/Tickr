@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+      <UserSecretsId>604132d1-62a8-4602-bd1a-e15ce72bafb8</UserSecretsId>
+  </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Auth0.AuthenticationApi" Version="7.3.2" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.33.1" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\todo.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+</Project>

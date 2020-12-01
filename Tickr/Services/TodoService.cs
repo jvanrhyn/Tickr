@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Tickr.Models;
 
@@ -13,13 +14,14 @@ namespace Tickr.Services
     {
         private readonly IDataService _dataService;
         private readonly ILogger<TodoService> _logger;
-
+        
         public TodoService(ILogger<TodoService> logger, IDataService dataService)
         {
             _logger = logger;
             _dataService = dataService;
         }
 
+        [Authorize]
         public override async Task<TodoReply> Add(TodoRequest request, ServerCallContext context)
         {
             Stopwatch stopwatch = new();
@@ -48,6 +50,7 @@ namespace Tickr.Services
             return response;
         }
 
+        [Authorize]
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
             ServerCallContext context)
         {
@@ -55,6 +58,7 @@ namespace Tickr.Services
                 await responseStream.WriteAsync(todoModel.ToResponse());
         }
 
+        [Authorize]
         public override async Task<CompleteReply> Complete(CompleteRequest request, ServerCallContext context)
         {
             CompleteReply completeReply = new() {Id = request.Id};

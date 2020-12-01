@@ -1,9 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Tickr.Services;
 
 namespace Tickr
@@ -14,14 +22,36 @@ namespace Tickr
         {
             Configuration = configuration;
         }
-        
+
         public IConfiguration Configuration { get; }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
+
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
+            services.AddAuthentication("Auth0")
+                .AddScheme<JwtBearerOptions, JWTAuthenticationHandler>("Auth0", options =>
+                {
+                    options.Audience = Configuration["Auth0:Audience"];
+                    options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+                });
+               
+
+            IdentityModelEventSource.ShowPII = true;
+
+            services.AddAuthorization( /* options =>
+            {
+                options.AddPolicy("protectedScope", policy =>
+                {
+                    policy.RequireClaim("scope", "grpc_protected_scope");
+                });
+            }*/);
+
+
+
+            services.AddGrpc(options => options.EnableDetailedErrors = true);
             services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
 
             services.AddSingleton<DataSource>();
@@ -34,6 +64,9 @@ namespace Tickr
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -48,4 +81,5 @@ namespace Tickr
             });
         }
     }
+
 }
