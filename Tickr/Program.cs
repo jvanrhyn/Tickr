@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
@@ -25,12 +26,14 @@ namespace Tickr
                         .ConfigureKestrel(options =>
                         {
                             options.Limits.MinRequestBodyDataRate = null;
+                            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                            {
+                                options.ListenAnyIP(5000,
+                                    listenOptions => { listenOptions.Protocols = HttpProtocols.Http1; });
 
-                            options.ListenAnyIP(5000,
-                                listenOptions => { listenOptions.Protocols = HttpProtocols.Http1; });
-
-                            options.ListenAnyIP(5001,
-                                listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; });
+                                options.ListenAnyIP(5001,
+                                    listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; });
+                            }
                         });
                 });
         }

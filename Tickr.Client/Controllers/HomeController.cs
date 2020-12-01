@@ -66,10 +66,10 @@ namespace Tickr.Client.Controllers
                 client.GetAll(new TodoFilterRequest() {IncludeCompleted = true}, headers);
 
             var replies = new List<TodoReply>();
-            
-            await foreach (var resp in  response.ResponseStream.ReadAllAsync())
+
+            while (await response.ResponseStream.MoveNext())
             {
-                replies.Add(resp);
+                replies.Add(response.ResponseStream.Current);
             }
 
             return replies;
