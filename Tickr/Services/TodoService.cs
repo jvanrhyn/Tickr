@@ -7,7 +7,7 @@ namespace Tickr.Services
     using Grpc.Core;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
-    using Tickr.Models;
+    using Models;
 
     public class TodoService : Todo.TodoBase
     {

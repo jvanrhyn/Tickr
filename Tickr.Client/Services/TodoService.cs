@@ -7,7 +7,7 @@ namespace Tickr.Client.Services
     using Grpc.Core;
     using Grpc.Net.Client;
     using Microsoft.Extensions.Configuration;
-    using Tickr.Client.Helpers;
+    using Helpers;
 
     public class TodoService 
     {

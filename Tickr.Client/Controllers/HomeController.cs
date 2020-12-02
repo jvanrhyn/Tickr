@@ -4,8 +4,8 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Tickr.Client.Models;
-    using Tickr.Client.Services;
+    using Models;
+    using Services;
 
     public class HomeController : Controller
     {

@@ -5,8 +5,8 @@ namespace Tickr.Client
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Tickr.Client.Helpers;
-    using Tickr.Client.Services;
+    using Helpers;
+    using Services;
 
     public class Startup
     {

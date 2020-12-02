@@ -6,7 +6,7 @@ namespace Tickr.Services
     using Microsoft.Extensions.Logging;
     using Raven.Client.Documents;
     using Raven.Client.Documents.Linq;
-    using Tickr.Models;
+    using Models;
 
     public class DataService : IDataService
     {

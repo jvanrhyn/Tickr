@@ -10,7 +10,7 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Logging;
-    using Tickr.Services;
+    using Services;
 
     public class Startup
     {

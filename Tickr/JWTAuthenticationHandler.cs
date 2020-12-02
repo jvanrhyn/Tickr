@@ -20,10 +20,10 @@ namespace Tickr
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var authorityConfig =
-                await this.Options.ConfigurationManager.GetConfigurationAsync(this.Context.RequestAborted);
+                await Options.ConfigurationManager.GetConfigurationAsync(Context.RequestAborted);
             var authorityIssuer = authorityConfig.Issuer;
 
-            var jwtToken = this.ReadTokenFromHeader();
+            var jwtToken = ReadTokenFromHeader();
 
             var jwtHandler = new JwtSecurityTokenHandler();
 
@@ -40,7 +40,7 @@ namespace Tickr
                     // Skip validation since the token as issued by a an issuer that this instance doesn't know about
                     // That has zero of success, so we will not issue a "fail" since it crowds the logs with failures of type IDX10501 
                     // which are not really true and certainly not useful.
-                    this.Logger.LogDebug(
+                    Logger.LogDebug(
                         $"Skipping jwt token validation because token issuer was {token.Issuer} but the authority issuer is: {authorityIssuer}");
                     return AuthenticateResult.NoResult();
                 }
