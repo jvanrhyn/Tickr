@@ -1,8 +1,8 @@
-using System;
-using Google.Protobuf.WellKnownTypes;
-
 namespace Tickr.Models
 {
+    using System;
+    using Google.Protobuf.WellKnownTypes;
+
     public class TodoModel
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Global

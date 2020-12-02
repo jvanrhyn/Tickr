@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Grpc.Core;
-using Grpc.Net.Client;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Tickr.Client.Models;
-using Tickr.Client.Services;
-
-namespace Tickr.Client.Controllers
+﻿namespace Tickr.Client.Controllers
 {
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Tickr.Client.Models;
+    using Tickr.Client.Services;
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

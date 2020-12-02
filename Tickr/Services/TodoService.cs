@@ -1,15 +1,14 @@
-using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using Tickr.Models;
-
 namespace Tickr.Services
 {
+    using System;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Google.Protobuf.WellKnownTypes;
+    using Grpc.Core;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.Extensions.Logging;
+    using Tickr.Models;
+
     public class TodoService : Todo.TodoBase
     {
         private readonly IDataService _dataService;

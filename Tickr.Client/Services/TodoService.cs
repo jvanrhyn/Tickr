@@ -1,16 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Grpc.Core;
-using Grpc.Net.Client;
-using Microsoft.Extensions.Configuration;
-using Tickr.Client.Helpers;
-
 namespace Tickr.Client.Services
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+    using System.Threading.Tasks;
+    using Grpc.Core;
+    using Grpc.Net.Client;
+    using Microsoft.Extensions.Configuration;
+    using Tickr.Client.Helpers;
+
     public class TodoService 
     {
         private readonly IConfiguration _configuration;

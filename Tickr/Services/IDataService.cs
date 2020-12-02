@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Tickr.Models;
-
 namespace Tickr.Services
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Tickr.Models;
+
     public interface IDataService
     {
         Task<TodoModel> Add(TodoModel todoModel);

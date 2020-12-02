@@ -1,5 +1,3 @@
-using System;
-
 namespace Tickr.Client.Models
 {
     public class ErrorViewModel

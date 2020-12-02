@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
-using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Microsoft.Extensions.Configuration;
-
 namespace Tickr.Client.Helpers
 {
+    using System.Threading.Tasks;
+    using Auth0.AuthenticationApi;
+    using Auth0.AuthenticationApi.Models;
+    using Microsoft.Extensions.Configuration;
 
 
     public class AuthorizationHelper : IAuthorizationHelper

@@ -1,10 +1,10 @@
-using System;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
 namespace Tickr
 {
+    using System;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
+
     /// <summary>
     /// https://adamstorr.azurewebsites.net/blog/beyond-basics-aspnetcore-adding-and-using-configuration
     /// </summary>
