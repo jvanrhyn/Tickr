@@ -29,7 +29,7 @@ namespace Tickr.Services
                     MaxNumberOfRequestsPerSession = 10,
                     UseOptimisticConcurrency = true
                 },
-                Database = "Shrt",
+                Database = _ravenSettings.DatabaseName,
                 Certificate =
                     new X509Certificate2(_ravenSettings.CertificateLocation)
             }.Initialize();

@@ -1,14 +1,14 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-
-namespace Tickr
+﻿namespace Tickr
 {
+    using System;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Text.Encodings.Web;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+
     public class JWTAuthenticationHandler : JwtBearerHandler
     {
         public JWTAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger,
