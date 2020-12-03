@@ -83,4 +83,17 @@ Set the _CertificationLocation_ secret.
 ```bash
 dotnet user-secret set "RavenSettings:CertificateLocation" "<Path to certificate (PFX) file>"
 ```
-> When using RavenDB cloud, the certificate is required login to the database. YOu can download the certificate from the RavenDB Studio.
+> When using RavenDB cloud, the certificate is required login to the database. You can download the certificate from the RavenDB Studio.
+
+
+Set the _Auth0 Domain_ secret.
+```bash
+dotnet user-secret set "Auth0:Domain" "xxx.auth0.com"
+```
+> This projects uses __Auth0__ for authorization. This value is used to set the name of the registered Auth0 domain.  
+
+Set the _Auth0 Audience_ secret.
+```bash
+dotnet user-secret set "Auth0:Audience" "audience value"
+```
+> This projects uses __Auth0__ for authorization. This value is used to set the audience for the registered API in Auth0.  
