@@ -20,7 +20,7 @@ namespace Tickr.Services
             _dataService = dataService;
         }
 
-        [Authorize]
+        [Authorize(Policy = "HasModifyScope")]
         public override async Task<TodoReply> Add(TodoRequest request, ServerCallContext context)
         {
             Stopwatch stopwatch = new();
@@ -49,7 +49,7 @@ namespace Tickr.Services
             return response;
         }
 
-        [Authorize]
+        [Authorize(Policy = "HasReadScope")]
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
             ServerCallContext context)
         {
@@ -57,7 +57,7 @@ namespace Tickr.Services
                 await responseStream.WriteAsync(todoModel.ToResponse());
         }
 
-        [Authorize]
+        [Authorize(Policy = "HasModifyScope")]
         public override async Task<CompleteReply> Complete(CompleteRequest request, ServerCallContext context)
         {
             CompleteReply completeReply = new() {Id = request.Id};

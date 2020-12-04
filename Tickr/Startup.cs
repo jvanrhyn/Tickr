@@ -25,7 +25,6 @@
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
             services.AddAuthentication("Auth0")
                 .AddScheme<JwtBearerOptions, JWTAuthenticationHandler>("Auth0", options =>
@@ -37,13 +36,13 @@
 
             IdentityModelEventSource.ShowPII = true;
 
-            services.AddAuthorization( /* options =>
+            services.AddAuthorization(options =>
             {
-                options.AddPolicy("protectedScope", policy =>
-                {
-                    policy.RequireClaim("scope", "grpc_protected_scope");
-                });
-            }*/);
+                options.AddPolicy("HasReadScope",
+                    policy => { policy.RequireScope("grpc_read_scope", "grpc_modify_scope"); });
+                options.AddPolicy("HasModifyScope",
+                    policy => { policy.RequireScope("grpc_modify_scope"); });
+            });
 
 
 
@@ -77,5 +76,4 @@
             });
         }
     }
-
 }
