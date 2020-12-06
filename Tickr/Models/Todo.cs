@@ -1,7 +1,6 @@
 namespace Tickr.Models
 {
     using System;
-    using Google.Protobuf.WellKnownTypes;
 
     public class TodoModel
     {
@@ -11,15 +10,9 @@ namespace Tickr.Models
         public DateTime Created { get; init; }
         public bool Complete { get; set; }
 
-        public TodoReply ToResponse()
+        public override string ToString()
         {
-            return new()
-            {
-                Complete = Complete,
-                Created = Timestamp.FromDateTime(Created),
-                Description = Description,
-                Id = Id
-            };
+            return $"Todo | Id:{Id} | Description : {Description}| Complete: {Complete}";
         }
     }
 }

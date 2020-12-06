@@ -54,7 +54,7 @@ namespace Tickr.Services
             ServerCallContext context)
         {
             foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted))
-                await responseStream.WriteAsync(todoModel.ToResponse());
+                await responseStream.WriteAsync(todoModel.ToReply());
         }
 
         [Authorize(Policy = "HasModifyScope")]
