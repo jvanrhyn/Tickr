@@ -3,6 +3,7 @@ namespace Tickr.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
@@ -29,22 +30,22 @@ namespace Tickr.Services
         }
         
         [Authorize(Policy = "HasModifyScope")]
-        public async Task<TodoModel> Add(TodoModel todoModel)
+        public async Task<TodoModel> Add(TodoModel todoModel, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel));
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel), cancellationToken);
         }
         
         [Authorize(Policy = "HasReadScope")]
-        public async Task<List<TodoModel>> GetAll(bool includeCompleted)
+        public async Task<List<TodoModel>> GetAll(bool includeCompleted, CancellationToken cancellationToken = default)
         {
             return await _retryPolicyHandler
-               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted));
+               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted), cancellationToken);
         }
 
         [Authorize(Policy = "HasModifyScope")]
-        public async Task<bool> Complete(string id)
+        public async Task<bool> Complete(string id, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id));
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id), cancellationToken);
         }
 
         private async Task<TodoModel> AddImpl(TodoModel todoModel)

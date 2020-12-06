@@ -33,7 +33,7 @@ namespace Tickr.Services
                 Description = request.Description
             };
 
-            await _dataService.Add(todoModel);
+            await _dataService.Add(todoModel, context.CancellationToken);
 
             TodoReply response = new()
             {
@@ -53,7 +53,7 @@ namespace Tickr.Services
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
             ServerCallContext context)
         {
-            foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted))
+            foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted, context.CancellationToken))
                 await responseStream.WriteAsync(todoModel.ToResponse());
         }
 
@@ -64,7 +64,7 @@ namespace Tickr.Services
 
             try
             {
-                var success = await _dataService.Complete(request.Id);
+                var success = await _dataService.Complete(request.Id, context.CancellationToken);
                 completeReply.Status = success ? "Completed" : "Not completed";
                 return completeReply;
             }
