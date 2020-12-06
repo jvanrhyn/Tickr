@@ -1,6 +1,7 @@
 ﻿namespace Tickr.Client.Controllers
 {
     using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -18,10 +19,10 @@
             _todoService = todoService;
         }
 
-        public async  Task<IActionResult> Index()
+        public async  Task<IActionResult> Index(CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("Fetching todo items from the server");
-            var data = await _todoService.GetAllTodo();
+            var data = await _todoService.GetAllTodo(cancellationToken);
             return View(data);
         }
 

@@ -1,6 +1,7 @@
 namespace Tickr.ResiliencePolicyHandlers
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using Polly;
@@ -14,19 +15,20 @@ namespace Tickr.ResiliencePolicyHandlers
             _logger = logger;
         }
 
-        public async Task<T> Retry<T>(int retryCount, Func<Task<T>> function)
+        public async Task<T> Retry<T>(int retryCount, Func<Task<T>> function, CancellationToken cancellationToken = default)
         {
             var nameOfFunc = function.Method.Name;
             return await Policy
                 .Handle<Exception>()
                 .RetryAsync(retryCount, async (exception, count) =>
                 {
-                    await Task.Delay(1000 * retryCount).ConfigureAwait(false);
+                    var waitTime = Math.Pow(2, retryCount);
+                    await Task.Delay((int)waitTime, cancellationToken).ConfigureAwait(false);
                     _logger.LogWarning("Retrying operation {functionName}. {count}/{retryCount} : Reason : '{message}'"
                         , nameOfFunc
                         , count
                         , retryCount
-                        , exception.GetBaseException().Message);
+                        , exception.Message);
                 })
                 .ExecuteAsync(async () => await function())
                 .ConfigureAwait(false);

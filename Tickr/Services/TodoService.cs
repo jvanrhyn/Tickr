@@ -33,7 +33,7 @@ namespace Tickr.Services
                 Description = request.Description
             };
 
-            await _dataService.Add(todoModel);
+            await _dataService.Add(todoModel, context.CancellationToken);
 
             TodoReply response = new()
             {
@@ -64,7 +64,7 @@ namespace Tickr.Services
 
             try
             {
-                var success = await _dataService.Complete(request.Id);
+                var success = await _dataService.Complete(request.Id, context.CancellationToken);
                 completeReply.Status = success ? "Completed" : "Not completed";
                 return completeReply;
             }
