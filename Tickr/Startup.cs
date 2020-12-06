@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Logging;
+    using ResiliencePolicyHandlers;
     using Services;
 
     public class Startup
@@ -42,15 +43,16 @@
                     policy => { policy.RequireScope("grpc_read_scope", "grpc_modify_scope"); });
                 options.AddPolicy("HasModifyScope",
                     policy => { policy.RequireScope("grpc_modify_scope"); });
+                
+                
             });
-
-
-
+            
             services.AddGrpc(options => options.EnableDetailedErrors = true);
             services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
 
             services.AddSingleton<DataSource>();
             services.AddTransient<IDataService, DataService>();
+            services.AddTransient<RetryPolicyHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,25 +1,50 @@
 namespace Tickr.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
     using Raven.Client.Documents;
     using Raven.Client.Documents.Linq;
     using Models;
+    using Polly;
+    using ResiliencePolicyHandlers;
 
     public class DataService : IDataService
     {
         private readonly ILogger<DataService> _logger;
         private readonly DataSource _dataSource;
+        private readonly RetryPolicyHandler _retryPolicyHandler;
 
-        public DataService(ILogger<DataService> logger, DataSource dataSource)
+        public DataService(ILogger<DataService> logger, DataSource dataSource, RetryPolicyHandler retryPolicyHandler)
         {
             _logger = logger;
             _dataSource = dataSource;
+            _retryPolicyHandler = retryPolicyHandler;
+        }
+        
+        [Authorize(Policy = "HasModifyScope")]
+        public async Task<TodoModel> Add(TodoModel todoModel)
+        {
+            return await _retryPolicyHandler.Retry(3, () => AddImpl(todoModel));
+        }
+        
+        [Authorize(Policy = "HasReadScope")]
+        public async Task<List<TodoModel>> GetAll(bool includeCompleted)
+        {
+            return await _retryPolicyHandler
+               .Retry(3, () => GetAllImpl(includeCompleted));
         }
 
-        public async Task<TodoModel> Add(TodoModel todoModel)
+        [Authorize(Policy = "HasModifyScope")]
+        public async Task<bool> Complete(string id)
+        {
+            return await _retryPolicyHandler.Retry(3, () => CompleteImpl(id));
+        }
+
+        private async Task<TodoModel> AddImpl(TodoModel todoModel)
         {
             _logger.LogDebug("Adding new todoModel {todo}", todoModel);
             var store = _dataSource.Store;
@@ -31,7 +56,7 @@ namespace Tickr.Services
             return todoModel;
         }
 
-        public async Task<List<TodoModel>> GetAll(bool includeCompleted)
+        private async Task<List<TodoModel>> GetAllImpl(bool includeCompleted)
         {
             var store = _dataSource.Store;
             using var session = store.OpenAsyncSession();
@@ -43,7 +68,7 @@ namespace Tickr.Services
             return await models.ToListAsync();
         }
 
-        public async Task<bool> Complete(string id)
+        private async Task<bool> CompleteImpl(string id)
         {
             var store = _dataSource.Store;
 
