@@ -12,6 +12,7 @@
     using Microsoft.IdentityModel.Logging;
     using ResiliencePolicyHandlers;
     using Services;
+    using Settings;
 
     public class Startup
     {
@@ -49,6 +50,7 @@
             
             services.AddGrpc(options => options.EnableDetailedErrors = true);
             services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
+            services.AddConfig<ResilienceSettings>(Configuration.GetSection("Resilience"));
 
             services.AddSingleton<DataSource>();
             services.AddTransient<IDataService, DataService>();

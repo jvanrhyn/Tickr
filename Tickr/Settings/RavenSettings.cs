@@ -1,4 +1,4 @@
-namespace Tickr
+namespace Tickr.Settings
 {
     public class RavenSettings
     {

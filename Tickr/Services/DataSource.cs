@@ -2,6 +2,7 @@ namespace Tickr.Services
 {
     using System.Security.Cryptography.X509Certificates;
     using Raven.Client.Documents;
+    using Settings;
 
     public  class DataSource
     {

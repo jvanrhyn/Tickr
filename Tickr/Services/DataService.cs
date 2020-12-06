@@ -11,37 +11,40 @@ namespace Tickr.Services
     using Models;
     using Polly;
     using ResiliencePolicyHandlers;
+    using Settings;
 
     public class DataService : IDataService
     {
         private readonly ILogger<DataService> _logger;
         private readonly DataSource _dataSource;
         private readonly RetryPolicyHandler _retryPolicyHandler;
+        private readonly ResilienceSettings _resilienceSettings;
 
-        public DataService(ILogger<DataService> logger, DataSource dataSource, RetryPolicyHandler retryPolicyHandler)
+        public DataService(ILogger<DataService> logger, DataSource dataSource, RetryPolicyHandler retryPolicyHandler, ResilienceSettings resilienceSettings)
         {
             _logger = logger;
             _dataSource = dataSource;
             _retryPolicyHandler = retryPolicyHandler;
+            _resilienceSettings = resilienceSettings;
         }
         
         [Authorize(Policy = "HasModifyScope")]
         public async Task<TodoModel> Add(TodoModel todoModel)
         {
-            return await _retryPolicyHandler.Retry(3, () => AddImpl(todoModel));
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel));
         }
         
         [Authorize(Policy = "HasReadScope")]
         public async Task<List<TodoModel>> GetAll(bool includeCompleted)
         {
             return await _retryPolicyHandler
-               .Retry(3, () => GetAllImpl(includeCompleted));
+               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted));
         }
 
         [Authorize(Policy = "HasModifyScope")]
         public async Task<bool> Complete(string id)
         {
-            return await _retryPolicyHandler.Retry(3, () => CompleteImpl(id));
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id));
         }
 
         private async Task<TodoModel> AddImpl(TodoModel todoModel)

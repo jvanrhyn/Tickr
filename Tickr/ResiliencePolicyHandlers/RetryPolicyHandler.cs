@@ -21,7 +21,7 @@ namespace Tickr.ResiliencePolicyHandlers
                 .Handle<Exception>()
                 .RetryAsync(retryCount, async (exception, count) =>
                 {
-                    await Task.Delay(250 * retryCount).ConfigureAwait(false);
+                    await Task.Delay(1000 * retryCount).ConfigureAwait(false);
                     _logger.LogWarning("Retrying operation {functionName}. {count}/{retryCount} : Reason : '{message}'"
                         , nameOfFunc
                         , count
