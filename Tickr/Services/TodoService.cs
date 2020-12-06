@@ -53,8 +53,8 @@ namespace Tickr.Services
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
             ServerCallContext context)
         {
-            foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted, context.CancellationToken))
-                await responseStream.WriteAsync(todoModel.ToResponse());
+            foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted))
+                await responseStream.WriteAsync(todoModel.ToReply());
         }
 
         [Authorize(Policy = "HasModifyScope")]
