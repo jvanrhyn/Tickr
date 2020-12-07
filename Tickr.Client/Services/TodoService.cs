@@ -5,6 +5,7 @@ namespace Tickr.Client.Services
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using Cofigurations;
     using Grpc.Core;
     using Grpc.Net.Client;
     using Microsoft.Extensions.Configuration;
@@ -12,26 +13,26 @@ namespace Tickr.Client.Services
 
     public class TodoService 
     {
-        private readonly IConfiguration _configuration;
         private readonly IAuthorizationHelper _authorizationHelper;
         private readonly PerformanceSettings _performanceSettings;
+        private readonly ServerSettings _serverSettings;
 
-        public TodoService(IConfiguration configuration, IAuthorizationHelper authorizationHelper, PerformanceSettings performanceSettings)
+        public TodoService(IAuthorizationHelper authorizationHelper, PerformanceSettings performanceSettings, ServerSettings serverSettings)
         {
-            _configuration = configuration;
             _authorizationHelper = authorizationHelper;
             _performanceSettings = performanceSettings;
+            _serverSettings = serverSettings;
         }   
         
         public async Task<List<TodoReply>> GetAllTodo(CancellationToken cancellationToken)
         {
-            var serverAddress = "https://localhost:5001";
+            var serverAddress = _serverSettings.TodoServerHttps;
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 AppContext.SetSwitch(
                     "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                serverAddress = "http://localhost:5000";
+                serverAddress = _serverSettings.TodoServerHttp;
             }
             
             var channel = GrpcChannel.ForAddress(serverAddress);
