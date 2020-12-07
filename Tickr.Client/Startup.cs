@@ -1,6 +1,7 @@
 namespace Tickr.Client
 {
     using System.Reflection.Metadata.Ecma335;
+    using Cofigurations;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -25,6 +26,7 @@ namespace Tickr.Client
             services.AddSingleton<IAuthorizationHelper, AuthorizationHelper>();
             services.AddControllersWithViews();
             services.AddConfig<PerformanceSettings>(Configuration.GetSection("Performance"));
+            services.AddConfig<ServerSettings>(Configuration.GetSection("Servers"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
