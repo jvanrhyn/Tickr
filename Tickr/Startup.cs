@@ -27,12 +27,16 @@
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
+            services.AddConfig<ResilienceSettings>(Configuration.GetSection("Resilience"));
+            var authSettings = services.AddConfig<AuthSettings>(Configuration.GetSection("Auth0"));
+            
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
             services.AddAuthentication("Auth0")
                 .AddScheme<JwtBearerOptions, JWTAuthenticationHandler>("Auth0", options =>
                 {
-                    options.Audience = Configuration["Auth0:Audience"];
-                    options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+                    options.Audience = authSettings.Audience;
+                    options.Authority = $"https://{authSettings.Domain}/";
                 });
                
 
@@ -49,8 +53,7 @@
             });
             
             services.AddGrpc(options => options.EnableDetailedErrors = true);
-            services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
-            services.AddConfig<ResilienceSettings>(Configuration.GetSection("Resilience"));
+
 
             services.AddSingleton<DataSource>();
             services.AddTransient<IDataService, DataService>();
@@ -60,8 +63,12 @@
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
-
+            if (env.IsDevelopment())
+            {
+                //app.AddUserSecrets<Startup>();
+                app.UseDeveloperExceptionPage();
+            }
+            
             app.UseRouting();
 
             app.UseAuthentication();

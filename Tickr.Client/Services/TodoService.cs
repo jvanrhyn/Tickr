@@ -1,3 +1,5 @@
+using Tickr.Client.Configurations;
+
 namespace Tickr.Client.Services
 {
     using System;
@@ -5,7 +7,6 @@ namespace Tickr.Client.Services
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using Cofigurations;
     using Grpc.Core;
     using Grpc.Net.Client;
     using Microsoft.Extensions.Configuration;

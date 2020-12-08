@@ -1,3 +1,5 @@
+using Tickr.Client.Configurations;
+
 namespace Tickr.Client.Helpers
 {
     using System.Threading.Tasks;
@@ -9,20 +11,21 @@ namespace Tickr.Client.Helpers
     public class AuthorizationHelper : IAuthorizationHelper
     {
         private readonly IConfiguration _configuration;
+        private readonly AuthSettings _authSettings;
 
-        public AuthorizationHelper(IConfiguration configuration)
+        public AuthorizationHelper(IConfiguration configuration, AuthSettings authSettings)
         {
             _configuration = configuration;
+            _authSettings = authSettings;
         }
         public async Task<string> GetAccessToken()
         {
-            var appAuth0Settings = _configuration.GetSection("Auth0");
-            var auth0Client = new AuthenticationApiClient(appAuth0Settings["Domain"]);
+            var auth0Client = new AuthenticationApiClient(_authSettings.Domain);
             var tokenRequest = new ClientCredentialsTokenRequest()
             {
-                ClientId = appAuth0Settings["ClientId"],
-                ClientSecret = appAuth0Settings["ClientSecret"],
-                Audience = appAuth0Settings["Audience"]
+                ClientId = _authSettings.ClientId,
+                ClientSecret = _authSettings.ClientSecret,
+                Audience = _authSettings.Audience
             };
             var tokenResponse = await auth0Client.GetTokenAsync(tokenRequest);
 

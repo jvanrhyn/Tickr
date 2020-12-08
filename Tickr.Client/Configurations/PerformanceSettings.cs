@@ -1,4 +1,4 @@
-namespace Tickr.Client.Cofigurations
+namespace Tickr.Client.Configurations
 {
     public class PerformanceSettings
     {
