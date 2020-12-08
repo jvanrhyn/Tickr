@@ -96,4 +96,14 @@ Set the _Auth0 Audience_ secret.
 ```bash
 dotnet user-secret set "Auth0:Audience" "audience value"
 ```
+
+Set the _Auth0 ClientId_ secret.
+```bash
+dotnet user-secret set "Auth0:ClientId" "clientId from Auth0"
+```
+
+Set the _Auth0 ClientSecret_ secret.
+```bash
+dotnet user-secret set "Auth0:ClientSecret" "clientsecret from Auth0"
+```
 > This projects uses __Auth0__ for authorization. This value is used to set the audience for the registered API in Auth0.  
