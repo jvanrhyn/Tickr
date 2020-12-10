@@ -108,5 +108,3 @@ dotnet user-secret set "Auth0:ClientSecret" "clientsecret from Auth0"
 ```
 > This projects uses __Auth0__ for authorization. This value is used to set the audience for the registered API in Auth0.  
 
-
-> Work in progress...
