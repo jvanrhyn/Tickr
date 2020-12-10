@@ -28,7 +28,9 @@ namespace Tickr.Client
             services.AddConfig<AuthSettings>(Configuration.GetSection("Auth0"));
             
             services.AddTransient<TodoService>();
+            services.AddSingleton<ITodoClientBuilder, TodoClientBuilder>();
             services.AddSingleton<IAuthorizationHelper, AuthorizationHelper>();
+            services.AddSingleton<AuthorizationMetadataBuilder>();
             services.AddControllersWithViews();
 
         }

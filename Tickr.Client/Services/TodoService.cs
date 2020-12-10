@@ -4,44 +4,30 @@ namespace Tickr.Client.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
     using Grpc.Core;
-    using Grpc.Net.Client;
-    using Microsoft.Extensions.Configuration;
     using Helpers;
 
     public class TodoService 
     {
-        private readonly IAuthorizationHelper _authorizationHelper;
         private readonly PerformanceSettings _performanceSettings;
-        private readonly ServerSettings _serverSettings;
+        private readonly ITodoClientBuilder _todoClientBuilder;
+        private readonly AuthorizationMetadataBuilder _metadataBuilder;
 
-        public TodoService(IAuthorizationHelper authorizationHelper, PerformanceSettings performanceSettings, ServerSettings serverSettings)
+        public TodoService(PerformanceSettings performanceSettings
+            , ITodoClientBuilder todoClientBuilder
+            , AuthorizationMetadataBuilder metadataBuilder)
         {
-            _authorizationHelper = authorizationHelper;
             _performanceSettings = performanceSettings;
-            _serverSettings = serverSettings;
+            _todoClientBuilder = todoClientBuilder;
+            _metadataBuilder = metadataBuilder;
         }   
         
         public async Task<List<TodoReply>> GetAllTodo(CancellationToken cancellationToken)
         {
-            var serverAddress = _serverSettings.TodoServerHttps;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                AppContext.SetSwitch(
-                    "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-                serverAddress = _serverSettings.TodoServerHttp;
-            }
-            
-            var channel = GrpcChannel.ForAddress(serverAddress);
-            var client = new Todo.TodoClient(channel);
-
-            var accessToken = await _authorizationHelper.GetAccessToken();
-            var headers = new Metadata {{"Authorization", $"Bearer {accessToken}"}};
-
+            var client = await _todoClientBuilder.Create();
+            var headers = await _metadataBuilder.GetAuthorizationHeader();
 
             var deadline = DateTime.Now.Add(TimeSpan.FromSeconds(_performanceSettings.DeadlineInMilliseconds)).ToUniversalTime();
             var response =
@@ -56,8 +42,21 @@ namespace Tickr.Client.Services
 
             return replies;
         }
-        
-        
-       
+
+
+
+        public async Task<CompleteReply> Complete(
+            CompleteRequest request
+            , CancellationToken cancellationToken = default)
+        {
+            var client = await _todoClientBuilder.Create();
+            var headers = await _metadataBuilder.GetAuthorizationHeader();
+            
+            var deadline = DateTime.Now.Add(TimeSpan.FromSeconds(_performanceSettings.DeadlineInMilliseconds)).ToUniversalTime();
+            var response =
+                client.Complete(request, headers, deadline, cancellationToken);
+
+            return response;
+        }
     }
 }
