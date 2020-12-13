@@ -9,9 +9,9 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    public class JWTAuthenticationHandler : JwtBearerHandler
+    public class JwtAuthenticationHandler : JwtBearerHandler
     {
-        public JWTAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger,
+        public JwtAuthenticationHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger,
             UrlEncoder encoder, ISystemClock clock)
             : base(options, logger, encoder, clock)
         {

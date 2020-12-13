@@ -33,7 +33,7 @@
             
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
             services.AddAuthentication("Auth0")
-                .AddScheme<JwtBearerOptions, JWTAuthenticationHandler>("Auth0", options =>
+                .AddScheme<JwtBearerOptions, JwtAuthenticationHandler>("Auth0", options =>
                 {
                     options.Audience = authSettings.Audience;
                     options.Authority = $"https://{authSettings.Domain}/";
