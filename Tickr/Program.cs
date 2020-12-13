@@ -20,15 +20,11 @@ namespace Tickr
                 {
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                     {
-                        webBuilder.ConfigureKestrel(options =>
-                        {
-                            // Setup a HTTP/2 endpoint without TLS.
-                            options.ListenLocalhost(5000, o => o.Protocols =
-                                HttpProtocols.Http2);
-                        });
+                        _ = webBuilder.ConfigureKestrel(options =>
+                            options.ListenLocalhost(5000, o => o.Protocols = HttpProtocols.Http2));
                     }
 
-                    webBuilder.UseStartup<Startup>();
+                    _ = webBuilder.UseStartup<Startup>();
                 });
     }
 }
