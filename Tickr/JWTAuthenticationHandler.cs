@@ -32,14 +32,10 @@
                 var token = jwtHandler.ReadJwtToken(jwtToken);
                 if (string.Equals(token.Issuer, authorityIssuer, StringComparison.OrdinalIgnoreCase))
                 {
-                    // means the token was issued by this authority, we make sure full validation runs as normal
                     return await base.HandleAuthenticateAsync();
                 }
                 else
                 {
-                    // Skip validation since the token as issued by a an issuer that this instance doesn't know about
-                    // That has zero of success, so we will not issue a "fail" since it crowds the logs with failures of type IDX10501 
-                    // which are not really true and certainly not useful.
                     Logger.LogDebug(
                         $"Skipping jwt token validation because token issuer was {token.Issuer} but the authority issuer is: {authorityIssuer}");
                     return AuthenticateResult.NoResult();
@@ -55,7 +51,6 @@
 
             string authorization = Request.Headers["Authorization"];
 
-            // If no authorization header found, nothing to process further
             if (string.IsNullOrEmpty(authorization))
             {
                 return null;
