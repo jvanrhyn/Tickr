@@ -1,6 +1,5 @@
 namespace Tickr.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -10,7 +9,6 @@ namespace Tickr.Services
     using Raven.Client.Documents;
     using Raven.Client.Documents.Linq;
     using Models;
-    using Polly;
     using ResiliencePolicyHandlers;
     using Settings;
 
@@ -32,35 +30,35 @@ namespace Tickr.Services
         [Authorize(Policy = "HasModifyScope")]
         public async Task<TodoModel> Add(TodoModel todoModel, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel), cancellationToken);
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel, cancellationToken), cancellationToken);
         }
         
         [Authorize(Policy = "HasReadScope")]
         public async Task<List<TodoModel>> GetAll(bool includeCompleted, CancellationToken cancellationToken = default)
         {
             return await _retryPolicyHandler
-               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted), cancellationToken);
+               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted, cancellationToken), cancellationToken);
         }
 
         [Authorize(Policy = "HasModifyScope")]
         public async Task<bool> Complete(string id, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id), cancellationToken);
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id, cancellationToken), cancellationToken);
         }
 
-        private async Task<TodoModel> AddImpl(TodoModel todoModel)
+        private async Task<TodoModel> AddImpl(TodoModel todoModel, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Adding new todoModel {todo}", todoModel);
             var store = _dataSource.Store;
 
             using var session = store.OpenAsyncSession();
-            await session.StoreAsync(todoModel);
-            await session.SaveChangesAsync();
+            await session.StoreAsync(todoModel, cancellationToken);
+            await session.SaveChangesAsync(token: cancellationToken);
 
             return todoModel;
         }
 
-        private async Task<List<TodoModel>> GetAllImpl(bool includeCompleted)
+        private async Task<List<TodoModel>> GetAllImpl(bool includeCompleted, CancellationToken cancellationToken = default)
         {
             var store = _dataSource.Store;
             using var session = store.OpenAsyncSession();
@@ -69,15 +67,15 @@ namespace Tickr.Services
             if (!includeCompleted)
                 models = Queryable.Where(models, x => x.Complete == false) as IRavenQueryable<TodoModel>;
 
-            return await models.ToListAsync();
+            return await models.ToListAsync(token: cancellationToken);
         }
 
-        private async Task<bool> CompleteImpl(string id)
+        private async Task<bool> CompleteImpl(string id, CancellationToken cancellationToken = default)
         {
             var store = _dataSource.Store;
 
             using var session = store.OpenAsyncSession();
-            var todoModel = await session.LoadAsync<TodoModel>(id);
+            var todoModel = await session.LoadAsync<TodoModel>(id, cancellationToken);
 
             if (todoModel == null)
             {
@@ -88,8 +86,8 @@ namespace Tickr.Services
             _logger.LogInformation($"Completing todo {todoModel}", todoModel);
             todoModel.Complete = true;
 
-            await session.StoreAsync(todoModel);
-            await session.SaveChangesAsync();
+            await session.StoreAsync(todoModel, cancellationToken);
+            await session.SaveChangesAsync(cancellationToken);
 
             return true;
         }
