@@ -1,5 +1,3 @@
-using Tickr.Client.Configurations;
-
 namespace Tickr.Client.Services
 {
     using System;
@@ -8,6 +6,7 @@ namespace Tickr.Client.Services
     using System.Threading.Tasks;
     using Grpc.Core;
     using Helpers;
+    using Configurations;
 
     public class TodoService 
     {
@@ -42,8 +41,6 @@ namespace Tickr.Client.Services
 
             return replies;
         }
-
-
 
         public async Task<CompleteReply> Complete(
             CompleteRequest request
