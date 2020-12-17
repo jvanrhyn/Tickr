@@ -30,7 +30,7 @@ namespace Tickr.Client.Services
 
             var deadline = DateTime.Now.Add(TimeSpan.FromSeconds(_performanceSettings.DeadlineInMilliseconds)).ToUniversalTime();
             var response =
-                client.GetAll(new TodoFilterRequest() {IncludeCompleted = true}, headers, deadline, cancellationToken);
+                client.GetAll(new TodoFilterRequest {IncludeCompleted = true}, headers, deadline, cancellationToken);
 
             var replies = new List<TodoReply>();
 
