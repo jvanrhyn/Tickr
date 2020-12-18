@@ -1,95 +1,64 @@
 namespace Tickr.Services
 {
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
-    using Raven.Client.Documents;
-    using Raven.Client.Documents.Linq;
     using Models;
+    using Repositories;
     using ResiliencePolicyHandlers;
     using Settings;
 
     public class DataService : IDataService
     {
         private readonly ILogger<DataService> _logger;
-        private readonly DataSource _dataSource;
+        private readonly TodoRepository _todoRepository;
         private readonly RetryPolicyHandler _retryPolicyHandler;
         private readonly ResilienceSettings _resilienceSettings;
 
-        public DataService(ILogger<DataService> logger, DataSource dataSource, RetryPolicyHandler retryPolicyHandler, ResilienceSettings resilienceSettings)
+        public DataService(ILogger<DataService> logger, TodoRepository todoRepository, RetryPolicyHandler retryPolicyHandler, ResilienceSettings resilienceSettings)
         {
             _logger = logger;
-            _dataSource = dataSource;
+            _todoRepository = todoRepository;
             _retryPolicyHandler = retryPolicyHandler;
             _resilienceSettings = resilienceSettings;
         }
-        
+
         [Authorize(Policy = "HasModifyScope")]
         public async Task<TodoModel> Add(TodoModel todoModel, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => AddImpl(todoModel, cancellationToken), cancellationToken);
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount,
+                () => _todoRepository.Create(todoModel, cancellationToken), cancellationToken);
         }
-        
+
         [Authorize(Policy = "HasReadScope")]
         public async Task<List<TodoModel>> GetAll(bool includeCompleted, CancellationToken cancellationToken = default)
         {
+            _logger.LogDebug("Getting all todo model. Include completed is : {state}", includeCompleted);
             return await _retryPolicyHandler
-               .Retry(_resilienceSettings.RetryCount, () => GetAllImpl(includeCompleted, cancellationToken), cancellationToken);
+                .Retry(_resilienceSettings.RetryCount,
+                    () => (includeCompleted
+                        ? _todoRepository.GetAll(cancellationToken)
+                        : _todoRepository.GetFiltered(x => x.Complete == false, cancellationToken))
+                    , cancellationToken);
         }
 
         [Authorize(Policy = "HasModifyScope")]
         public async Task<bool> Complete(string id, CancellationToken cancellationToken = default)
         {
-            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, () => CompleteImpl(id, cancellationToken), cancellationToken);
-        }
-
-        private async Task<TodoModel> AddImpl(TodoModel todoModel, CancellationToken cancellationToken)
-        {
-            _logger.LogDebug("Adding new todoModel {todo}", todoModel);
-            var store = _dataSource.Store;
-
-            using var session = store.OpenAsyncSession();
-            await session.StoreAsync(todoModel, cancellationToken);
-            await session.SaveChangesAsync(token: cancellationToken);
-
-            return todoModel;
-        }
-
-        private async Task<List<TodoModel>> GetAllImpl(bool includeCompleted, CancellationToken cancellationToken = default)
-        {
-            var store = _dataSource.Store;
-            using var session = store.OpenAsyncSession();
-
-            var models = session.Query<TodoModel>();
-            if (!includeCompleted)
-                models = Queryable.Where(models, x => x.Complete == false) as IRavenQueryable<TodoModel>;
-
-            return await models.ToListAsync(token: cancellationToken);
-        }
-
-        private async Task<bool> CompleteImpl(string id, CancellationToken cancellationToken = default)
-        {
-            var store = _dataSource.Store;
-
-            using var session = store.OpenAsyncSession();
-            var todoModel = await session.LoadAsync<TodoModel>(id, cancellationToken);
-
-            if (todoModel == null)
+            _logger.LogDebug("Updating todo model for {key}", id);
+            return await _retryPolicyHandler.Retry(_resilienceSettings.RetryCount, async () =>
             {
-                _logger.LogWarning("Todo '{id}' could not be found to complete.", id);
-                throw new TodoNotFoundException(id);
-            }
-
-            _logger.LogInformation($"Completing todo {todoModel}", todoModel);
-            todoModel.Complete = true;
-
-            await session.StoreAsync(todoModel, cancellationToken);
-            await session.SaveChangesAsync(cancellationToken);
-
-            return true;
+                var model = await _todoRepository.GetById(id, cancellationToken);
+                if (model == null)
+                {
+                    throw new Exception($"TodoModel with key {id} not found");
+                }    
+                _ = await _todoRepository.Update(model, cancellationToken);
+                return true;
+            }, cancellationToken);
         }
     }
 }
