@@ -1,5 +1,6 @@
 ﻿namespace Tickr
 {
+    using AutoMapper;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Logging;
+    using Repositories;
     using ResiliencePolicyHandlers;
     using Services;
     using Settings;
@@ -23,13 +25,13 @@
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+    public void ConfigureServices(IServiceCollection services)
         {
+            var authSettings = services.AddConfig<AuthSettings>(Configuration.GetSection("Auth0"));
+
             services.AddConfig<RavenSettings>(Configuration.GetSection("RavenSettings"));
             services.AddConfig<ResilienceSettings>(Configuration.GetSection("Resilience"));
-            var authSettings = services.AddConfig<AuthSettings>(Configuration.GetSection("Auth0"));
+            
             
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
             services.AddAuthentication("Auth0")
@@ -53,19 +55,17 @@
             });
             
             services.AddGrpc(options => options.EnableDetailedErrors = true);
-
-
+            services.AddAutoMapper(typeof(Startup));
             services.AddSingleton<DataSource>();
             services.AddTransient<IDataService, DataService>();
             services.AddTransient<RetryPolicyHandler>();
+            services.AddTransient<TodoRepository>();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                //app.AddUserSecrets<Startup>();
                 app.UseDeveloperExceptionPage();
             }
             
