@@ -1,6 +1,7 @@
 ﻿namespace Tickr
 {
     using AutoMapper;
+    using Masking;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -57,6 +58,7 @@
             services.AddGrpc(options => options.EnableDetailedErrors = true);
             services.AddAutoMapper(typeof(Startup));
             services.AddSingleton<DataSource>();
+            services.AddSingleton<IIdentifierMasking, IdentifierMasking>();
             services.AddTransient<IDataService, DataService>();
             services.AddTransient<RetryPolicyHandler>();
             services.AddTransient<TodoRepository>();

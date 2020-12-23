@@ -5,6 +5,7 @@ namespace Tickr.Services
     using System.Threading.Tasks;
     using Google.Protobuf.WellKnownTypes;
     using Grpc.Core;
+    using Masking;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
     using Models;
@@ -12,12 +13,14 @@ namespace Tickr.Services
     public class TodoService : Todo.TodoBase
     {
         private readonly IDataService _dataService;
+        private readonly IIdentifierMasking _identifierMasking;
         private readonly ILogger<TodoService> _logger;
         
-        public TodoService(ILogger<TodoService> logger, IDataService dataService)
+        public TodoService(ILogger<TodoService> logger, IDataService dataService, IIdentifierMasking identifierMasking)
         {
             _logger = logger;
             _dataService = dataService;
+            _identifierMasking = identifierMasking;
         }
 
         [Authorize(Policy = "HasModifyScope")]
@@ -37,7 +40,7 @@ namespace Tickr.Services
 
             TodoReply response = new()
             {
-                Id = todoModel.Id,
+                Id = _identifierMasking.HideIdentifier(todoModel.Id),
                 Complete = todoModel.Complete,
                 Created = Timestamp.FromDateTime(todoModel.Created),
                 Description = todoModel.Description
@@ -54,7 +57,7 @@ namespace Tickr.Services
             ServerCallContext context)
         {
             foreach (var todoModel in await _dataService.GetAll(request.IncludeCompleted))
-                await responseStream.WriteAsync(todoModel.ToReply());
+                await responseStream.WriteAsync(todoModel.ToReply(_identifierMasking));
         }
 
         [Authorize(Policy = "HasModifyScope")]
@@ -64,7 +67,7 @@ namespace Tickr.Services
 
             try
             {
-                var success = await _dataService.Complete(request.Id, context.CancellationToken);
+                var success = await _dataService.Complete(_identifierMasking.RevealIdentifier(request.Id), context.CancellationToken);
                 completeReply.Status = success ? "Completed" : "Not completed";
                 return completeReply;
             }
