@@ -79,6 +79,7 @@
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<TodoService>();
+                endpoints.MapGrpcReflectionService();
 
                 endpoints.MapGet("/",
                     async context =>

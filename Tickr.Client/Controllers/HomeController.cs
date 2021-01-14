@@ -37,6 +37,19 @@
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
-     
+        [HttpPost]
+        public async Task<IActionResult> Complete(TodoReply item, CancellationToken cancellationToken)
+        {
+            CompleteRequest completeRequest = new()
+            {
+                Id = item.Id
+            };
+
+            await _todoService.Complete(completeRequest, cancellationToken);
+
+            return await Index(cancellationToken);
+        }
+
+
     }
 }

@@ -27,7 +27,7 @@
           <p class="card-text">We don't have a body just yet, that is an oversight.</p>
           @if (!item.Complete)
           {
-              <a href="#" class="btn btn-primary">Complete</a>
+              <a href="" class="btn btn-primary" onclick="complete(@item)">Complete</a>
           }
           else
           {
@@ -46,5 +46,14 @@
         }
     </div>
     
+    <script>
+
+        function complete(item) {
+            $.post('/home/complete', item, function(data, status) {
+
+            });
+        }
+
+    </script>
 
 }
