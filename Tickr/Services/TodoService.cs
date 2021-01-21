@@ -29,28 +29,17 @@ namespace Tickr.Services
             Stopwatch stopwatch = new();
             stopwatch.Start();
             _logger.LogInformation("Creating new Todo {description}", request.Description);
-            TodoModel todoModel = new()
-            {
-                Complete = request.Complete,
-                Created = DateTime.Now.ToUniversalTime(),
-                Description = request.Description
-            };
-
+            
+            var todoModel = BuildTodoRequestModel(request);
             await _dataService.Add(todoModel, context.CancellationToken);
-
-            TodoReply response = new()
-            {
-                Id = _identifierMasking.HideIdentifier(todoModel.Id),
-                Complete = todoModel.Complete,
-                Created = Timestamp.FromDateTime(todoModel.Created),
-                Description = todoModel.Description
-            };
+            var response = BuildTodoReply(todoModel);
 
             _logger.LogInformation("Completed creation for {id} in {duration}ms", todoModel.Id,
                 stopwatch.ElapsedMilliseconds);
             stopwatch.Stop();
             return response;
         }
+
 
         [Authorize(Policy = "HasReadScope")]
         public override async Task GetAll(TodoFilterRequest request, IServerStreamWriter<TodoReply> responseStream,
@@ -67,7 +56,8 @@ namespace Tickr.Services
 
             try
             {
-                var success = await _dataService.Complete(_identifierMasking.RevealIdentifier(request.Id), context.CancellationToken);
+                var success = await _dataService.Complete(_identifierMasking.RevealIdentifier(request.Id),
+                    context.CancellationToken);
                 completeReply.Status = success ? "Completed" : "Not completed";
                 return completeReply;
             }
@@ -76,6 +66,29 @@ namespace Tickr.Services
                 completeReply.Status = nfe.ToString();
                 return completeReply;
             }
+        }
+
+        internal TodoReply BuildTodoReply(TodoModel todoModel)
+        {
+            TodoReply response = new()
+            {
+                Id = _identifierMasking.HideIdentifier(todoModel.Id),
+                Complete = todoModel.Complete,
+                Created = Timestamp.FromDateTime(todoModel.Created),
+                Description = todoModel.Description
+            };
+            return response;
+        }
+
+        internal static TodoModel BuildTodoRequestModel(TodoRequest request)
+        {
+            TodoModel todoModel = new()
+            {
+                Complete = request.Complete,
+                Created = DateTime.Now.ToUniversalTime(),
+                Description = request.Description
+            };
+            return todoModel;
         }
     }
 }
