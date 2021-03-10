@@ -15,6 +15,8 @@ namespace Tickr.ResiliencePolicyHandlers
             _logger = logger;
         }
 
+        public int RetryCounter { get; set; }
+
         public async Task<T> Retry<T>(int retryCount, Func<Task<T>> function, CancellationToken cancellationToken = default)
         {
             var nameOfFunc = function.Method.Name;
@@ -22,6 +24,7 @@ namespace Tickr.ResiliencePolicyHandlers
                 .Handle<Exception>()
                 .RetryAsync(retryCount, async (exception, count) =>
                 {
+                    this.RetryCounter = count;
                     var waitTime = Math.Pow(2, retryCount);
                     await Task.Delay((int)waitTime, cancellationToken).ConfigureAwait(false);
                     _logger.LogWarning("Retrying operation {functionName}. {count}/{retryCount} : Reason : '{message}'"

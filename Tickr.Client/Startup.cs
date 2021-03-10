@@ -2,7 +2,6 @@ using Tickr.Client.Configurations;
 
 namespace Tickr.Client
 {
-    using System.Reflection.Metadata.Ecma335;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
