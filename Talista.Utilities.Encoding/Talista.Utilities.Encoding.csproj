@@ -2,6 +2,9 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <Title>Talista.Utilities.Encoding</Title>
+        <Authors>Johan van Rhyn</Authors>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
