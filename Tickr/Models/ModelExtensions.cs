@@ -1,7 +1,7 @@
 namespace Tickr.Models
 {
     using Google.Protobuf.WellKnownTypes;
-    using Masking;
+    using Talista.Utilities.Encoding;
 
     public static class ModelExtensions
     {

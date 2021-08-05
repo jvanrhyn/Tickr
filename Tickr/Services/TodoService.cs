@@ -5,10 +5,10 @@ namespace Tickr.Services
     using System.Threading.Tasks;
     using Google.Protobuf.WellKnownTypes;
     using Grpc.Core;
-    using Masking;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.Extensions.Logging;
     using Models;
+    using Talista.Utilities.Encoding;
 
     public class TodoService : Todo.TodoBase
     {

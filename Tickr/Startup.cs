@@ -1,7 +1,6 @@
 ﻿namespace Tickr
 {
     using AutoMapper;
-    using Masking;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -16,6 +15,7 @@
     using ResiliencePolicyHandlers;
     using Services;
     using Settings;
+    using Talista.Utilities.Encoding;
 
     public class Startup
     {
