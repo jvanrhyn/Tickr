@@ -11,21 +11,21 @@ namespace Tickr
     /// </summary>
     public class ScopeAuthorizationRequirement : AuthorizationHandler<ScopeAuthorizationRequirement>, IAuthorizationRequirement
     {
-        public IEnumerable<string> RequiredScopes { get; }
+        private IEnumerable<string> RequiredScopes { get; }
  
         public ScopeAuthorizationRequirement(IEnumerable<string> requiredScopes)
         {
-            if (requiredScopes == null || !requiredScopes.Any())
+            var scopes = requiredScopes.ToList();
+            if (requiredScopes == null || !scopes.Any())
             {
                 throw new ArgumentException($"{nameof(requiredScopes)} must contain at least one value.", nameof(requiredScopes));
             }
  
-            RequiredScopes = requiredScopes;
+            RequiredScopes = scopes;
         }
  
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeAuthorizationRequirement requirement)
         {
-            if (context.User != null)
             {
                 var scopeClaim = context.User.Claims.FirstOrDefault(
                     c => string.Equals(c.Type, "scope", StringComparison.OrdinalIgnoreCase));
@@ -39,7 +39,7 @@ namespace Tickr
                     }
                 }
             }
- 
+
             return Task.CompletedTask;
         }
     }
