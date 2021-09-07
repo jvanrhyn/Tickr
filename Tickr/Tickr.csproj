@@ -20,4 +20,8 @@
         <Protobuf Include="Protos\todo.proto" GrpcServices="Server" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Talista.Utilities.Encoding\Talista.Utilities.Encoding.csproj" />
+    </ItemGroup>
+
 </Project>

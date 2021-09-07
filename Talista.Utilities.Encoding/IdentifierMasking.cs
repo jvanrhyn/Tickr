@@ -1,4 +1,4 @@
-﻿namespace Tickr.Masking
+﻿namespace Talista.Utilities.Encoding
 {
     using System.Linq;
     using System.Text;
@@ -6,12 +6,6 @@
     //
     // https://ayende.com/blog/191297-C/avoiding-exposing-identifier-details-to-your-users
     //
-
-    public interface IIdentifierMasking
-    {
-        string RevealIdentifier(string hidden);
-        string HideIdentifier(string id);
-    }
 
     public class IdentifierMasking : IIdentifierMasking
     {

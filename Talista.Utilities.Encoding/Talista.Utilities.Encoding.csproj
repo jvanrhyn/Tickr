@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Title>Talista.Utilities.Encoding</Title>
+        <Authors>Johan van Rhyn</Authors>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SimpleBase" Version="3.1.0" />
+      <PackageReference Include="Sodium.Core" Version="1.2.3" />
+    </ItemGroup>
+
+</Project>
